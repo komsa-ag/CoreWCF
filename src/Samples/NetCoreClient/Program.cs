@@ -8,14 +8,14 @@ namespace NetCoreClient
 {
     class Program
     {
-        private readonly static string _basicHttpEndPointAddress = @"http://localhost:8080/basichttp";
+        //private readonly static string _basicHttpEndPointAddress = @"http://localhost:8080/basichttp";
         private readonly static string _soapEnvelopeContent = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><Echo xmlns = \"http://tempuri.org/\" ><text>Hello</text></Echo></soapenv:Body></soapenv:Envelope>";
 
 
         static void Main(string[] args)
         {
             CallUsingWcf();
-            CallUsingWebRequest();
+          //  CallUsingWebRequest();
 
             Console.WriteLine("Hit enter to exit");
             Console.ReadLine();
@@ -23,22 +23,22 @@ namespace NetCoreClient
 
         private static void CallUsingWcf()
         {
-            var factory = new ChannelFactory<Contract.IEchoService>(new BasicHttpBinding(), new EndpointAddress(_basicHttpEndPointAddress));
+            /*var factory = new ChannelFactory<Contract.IEchoService>(new BasicHttpBinding(), new EndpointAddress(_basicHttpEndPointAddress));
             factory.Open();
             var channel = factory.CreateChannel();
             ((IClientChannel)channel).Open();
             Console.WriteLine("http Echo(\"Hello\") => " + channel.Echo("Hello"));
             ((IClientChannel)channel).Close();
-            factory.Close();
+            factory.Close();*/
 
-            factory = new ChannelFactory<Contract.IEchoService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8808/nettcp"));
+            var factory = new ChannelFactory<Contract.IEchoService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:800/nettcp"));
             factory.Open();
-            channel = factory.CreateChannel();
+            var channel = factory.CreateChannel();
             ((IClientChannel)channel).Open();
             Console.WriteLine("net.tcp Echo(\"Hello\") => " + channel.Echo("Hello"));
             ((IClientChannel)channel).Close();
             factory.Close();
-
+      /*
             // Complex type testing
             factory = new ChannelFactory<Contract.IEchoService>(new BasicHttpBinding(), new EndpointAddress(_basicHttpEndPointAddress));
             factory.Open();
@@ -46,9 +46,9 @@ namespace NetCoreClient
             ((IClientChannel)channel).Open();
             Console.WriteLine("http EchoMessage(\"Complex Hello\") => " + channel.ComplexEcho(new Contract.EchoMessage() { Text = "Complex Hello" }));
             ((IClientChannel)channel).Close();
-            factory.Close();
+            factory.Close();*/
         }
-
+/*
         private static void CallUsingWebRequest() 
         {
             // 
@@ -80,5 +80,6 @@ namespace NetCoreClient
                 }
             }
         }
+*/
     }
 }

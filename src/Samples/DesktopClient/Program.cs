@@ -6,12 +6,12 @@ namespace DesktopClient
 {
     class Program
     {
-        private readonly static string _basicHttpEndPointAddress = @"http://localhost:8080/basichttp";
+//        private readonly static string _basicHttpEndPointAddress = @"http://localhost:8080/basichttp";
         private readonly static string _soapEnvelopeContent = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><Echo xmlns = \"http://tempuri.org/\" ><text>Hello</text></Echo></soapenv:Body></soapenv:Envelope>";
 
         static void Main(string[] args)
         {
-            var factory = new ChannelFactory<Contract.IEchoService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8808/nettcp"));
+            var factory = new ChannelFactory<Contract.IEchoService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:800/nettcp"));
             factory.Open();
             var channel = factory.CreateChannel();
             ((IClientChannel)channel).Open();
@@ -19,7 +19,7 @@ namespace DesktopClient
             ((IClientChannel)channel).Close();
             factory.Close();
 
-            factory = new ChannelFactory<Contract.IEchoService>(new BasicHttpBinding(), new EndpointAddress(_basicHttpEndPointAddress));
+  /*          factory = new ChannelFactory<Contract.IEchoService>(new BasicHttpBinding(), new EndpointAddress(_basicHttpEndPointAddress));
             factory.Open();
             channel = factory.CreateChannel();
             ((IClientChannel)channel).Open();
@@ -65,7 +65,7 @@ namespace DesktopClient
                     Console.WriteLine($"Http SOAP Response: {soapResponse}");
                 }
             }
-
+*/
             Console.WriteLine("Hit enter to exit");
             Console.ReadLine();
         }
