@@ -17,11 +17,11 @@ namespace NetCoreServer
       {
         builder
             .AddService<EchoService>()
-            //            .AddServiceEndpoint<EchoService, Contract.IEchoService>(new BasicHttpBinding(), "/basichttp")
+            .AddServiceEndpoint<EchoService, Contract.IEchoService>(new BasicHttpBinding(), "/basichttp")
             .AddServiceEndpoint<EchoService, Contract.IEchoService>(CreateBinding(), "/nettcp")
             .ConfigureServiceHostBase<EchoService>(serviceHost =>
-          serviceHost.Credentials.ServiceCertificate.SetCertificate(StoreLocation.LocalMachine,
-            StoreName.My, X509FindType.FindByIssuerName, "KOMSA ISSUING CA"));
+              serviceHost.Credentials.ServiceCertificate.SetCertificate(StoreLocation.LocalMachine,
+                StoreName.My, X509FindType.FindByIssuerName, "KOMSA ISSUING CA"));
       });
 
       static NetTcpBinding CreateBinding()
