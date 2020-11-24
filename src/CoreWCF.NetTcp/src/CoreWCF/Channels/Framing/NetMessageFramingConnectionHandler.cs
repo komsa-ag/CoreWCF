@@ -124,7 +124,9 @@ namespace CoreWCF.Channels.Framing
             // TODO: Limit NamedPipes to prevent it using SslStreamSecurityUpgradeProvider
             else if ((upgradeBindingElements.Count == 1) /*&& this.SupportsUpgrade(upgradeBindingElements[0])*/)
             {
-                var bindingContext = new BindingContext(new CustomBinding(dispatcher.Binding), new BindingParameterCollection());
+                var bindingParameterCollection = new BindingParameterCollection();
+                bindingParameterCollection.Add(dispatcher.ChannelDispatcher.Host.Credentials);
+                var bindingContext = new BindingContext(new CustomBinding(dispatcher.Binding), bindingParameterCollection);
                 streamUpgradeProvider = upgradeBindingElements[0].BuildServerStreamUpgradeProvider(bindingContext);
                 streamUpgradeProvider.OpenAsync().GetAwaiter().GetResult();
                 securityCapabilities = upgradeBindingElements[0].GetProperty<ISecurityCapabilities>(bindingContext);
