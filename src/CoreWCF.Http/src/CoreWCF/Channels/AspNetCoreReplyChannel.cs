@@ -91,53 +91,33 @@ namespace CoreWCF.Channels
 
         internal async Task HandleRequest(HttpContext context)
         {
-            try
-            {
-                await HandleRequestCore(context);
-            }
-            catch (ProtocolException)
-            {
-                // Emulate behavior of WCF when hosted on IIS/HTTP.SYS
-                // Scoping to only ProtocolException as this is a known bad request
-                // TODO: Add logging
-                if (context.Response.HasStarted)
-                {
-                    // Can't modify the headers if the response has started already so just rethrow
-                    throw;
-                }
-
-                context.Response.StatusCode = 400;
-                context.Response.ContentLength = 0;
-            }
-        }
-
-        internal async Task HandleRequestCore(HttpContext context)
-        {
             if (ChannelDispatcher == null)
             {
                 // TODO: Look for existing SR which would work here. Cleanup how the exception is thrown.
                 throw new InvalidOperationException("Channel Dispatcher can't be null");
             }
 
-            var requestContext = HttpRequestContext.CreateContext(_httpSettings, context);
-            HttpInput httpInput = requestContext.GetHttpInput(true);
-            (Message requestMessage, Exception requestException) = await httpInput.ParseIncomingMessageAsync();
-            if ((requestMessage == null) && (requestException == null))
+            using (var requestContext = HttpRequestContext.CreateContext(_httpSettings, context))
             {
-                throw Fx.Exception.AsError(
-                        new ProtocolException(
-                            SR.MessageXmlProtocolError,
-                            new XmlException(SR.MessageIsEmpty)));
-            }
+                await requestContext.ProcessAuthenticationAsync();
 
-            requestContext.SetMessage(requestMessage, requestException);
-            if (requestMessage != null)
-            {
-                requestMessage.Properties.Add("Microsoft.AspNetCore.Http.HttpContext", context);
-            }
+                HttpInput httpInput = requestContext.GetHttpInput(true);
+                (Message requestMessage, Exception requestException) = await httpInput.ParseIncomingMessageAsync();
+                if ((requestMessage == null) && (requestException == null))
+                {
+                    await requestContext.SendResponseAndCloseAsync(System.Net.HttpStatusCode.BadRequest);
+                    return;
+                }
 
-            await ChannelDispatcher.DispatchAsync(requestContext);
-            await requestContext.ReplySent;
+                requestContext.SetMessage(requestMessage, requestException);
+                if (requestMessage != null)
+                {
+                    requestMessage.Properties.Add("Microsoft.AspNetCore.Http.HttpContext", context);
+                }
+
+                await ChannelDispatcher.DispatchAsync(requestContext);
+                await requestContext.ReplySent;
+            }
         }
     }
 }

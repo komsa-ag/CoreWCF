@@ -1,19 +1,18 @@
 # Microsoft Support
 
-This document details Microsoft Support pollicy for CoreWCF.
+This document details Microsoft Support policy for CoreWCF.
 
-We recognize how important support is to enterprise customers, and so we are pleased to announce that Microsoft Product Support will be available for Core WCF customers.
+We recognize how important support is to enterprise customers, and so we are pleased to announce that Microsoft Product Support will be available for CoreWCF customers.
 
-Support for Core WCF 1.x will depend on the support status for the underlying .NET platforms it runs on.
+Support for CoreWCF 1.x will depend on the support status for the underlying .NET platforms it runs on.
 
 | **Runtime Version** | **Support dependency duration** |
 | --- | --- |
 | .NET Framework 4.x | The specific version of [.NET Framework](https://dotnet.microsoft.com/platform/support/policy/dotnet-framework), and [ASP.NET Core 2.1.](https://dotnet.microsoft.com/platform/support/policy/aspnet) |
-| .NET Core 3.1 | .NET 3.1 LTS - December 3, 2022 |
-| .NET 5 | .NET 5 - May 8, 2022 |
-| .NET 6 | .NET 6 LTS - November 8, 2024 |
+| .NET Core 3.1 | .NET Core 3.1 LTS - December 13, 2022 |
+| .NET 6 | .NET 6 LTS - November 12, 2024 |
 
-Core WCF will use Major.Minor versioning strategy:
+CoreWCF will use Major.Minor versioning strategy:
 
 - 1.0 will be the first major release of CoreWCF
 - Minor releases will be numbered 1.x, and will have the same underlying platform requirements as 1.0.

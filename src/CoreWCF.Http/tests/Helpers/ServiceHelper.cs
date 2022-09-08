@@ -100,7 +100,6 @@ namespace Helpers
             {
                 options.Authentication.Schemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes.None;
                 options.Authentication.AllowAnonymous = true;
-                options.AllowSynchronousIO = true;
                 options.UrlPrefixes.Add("http://+:80/Temporary_Listen_Addresses/CoreWCFTestServices");
                 options.UrlPrefixes.Add("http://+:80/Temporary_Listen_Addresses/CoreWCFTestServices/MorePath");
             })
@@ -120,7 +119,6 @@ namespace Helpers
 #endif // DEBUG
             .UseKestrel(options =>
             {
-                    options.AllowSynchronousIO = true;
                     options.Listen(IPAddress.Loopback, 8080, listenOptions =>
                     {
                         if (Debugger.IsAttached)
@@ -144,7 +142,6 @@ namespace Helpers
 #endif // DEBUG
             .UseKestrel(options =>
             {
-                options.AllowSynchronousIO = true;
                 options.Listen(IPAddress.Loopback, 8080, listenOptions =>
                 {
                     if (Debugger.IsAttached)
@@ -197,6 +194,57 @@ namespace Helpers
                 });
             })
             .UseStartup<TStartup>();
+
+#if NET5_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
+        public static IWebHostBuilder CreateHttpsWebHostBuilderWithHttpSys<TStartup>(ITestOutputHelper outputHelper = default) where TStartup : class =>
+        WebHost.CreateDefaultBuilder(Array.Empty<string>())
+#if DEBUG
+            .ConfigureLogging((ILoggingBuilder logging) =>
+            {
+                if(outputHelper != default)
+                    logging.AddProvider(new XunitLoggerProvider(outputHelper));
+                logging.AddFilter("Default", LogLevel.Debug);
+                logging.AddFilter("Microsoft", LogLevel.Debug);
+                logging.SetMinimumLevel(LogLevel.Debug);
+            })
+#endif // DEBUG
+            .UseHttpSys(options =>
+            {
+                options.Authentication.Schemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes.Negotiate
+                                                 | Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes.NTLM;
+                options.MaxConnections = null;
+                options.MaxRequestBodySize = 30000000;
+                options.UrlPrefixes.Add("https://localhost:44300");
+            })
+            .UseStartup<TStartup>();
+
+#if NET5_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
+        public static IWebHostBuilder CreateWebHostBuilderWithHttpSys<TStartup>(ITestOutputHelper outputHelper = default) where TStartup : class =>
+        WebHost.CreateDefaultBuilder(Array.Empty<string>())
+#if DEBUG
+                .ConfigureLogging((ILoggingBuilder logging) =>
+                {
+                    if (outputHelper != default)
+                        logging.AddProvider(new XunitLoggerProvider(outputHelper));
+                    logging.AddFilter("Default", LogLevel.Debug);
+                    logging.AddFilter("Microsoft", LogLevel.Debug);
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                })
+#endif // DEBUG
+                .UseHttpSys(options =>
+                {
+                    options.AllowSynchronousIO = true;
+                    options.Authentication.AllowAnonymous = true;
+                    options.Authentication.Schemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes.None;
+                    options.MaxConnections = null;
+                    options.MaxRequestBodySize = 30000000;
+                    options.UrlPrefixes.Add("http://localhost:8085");
+                })
+                .UseStartup<TStartup>();
 
         public static IWebHostBuilder CreateHttpsWebHostBuilder(ITestOutputHelper outputHelper, Type startupType) =>
             WebHost.CreateDefaultBuilder(Array.Empty<string>())

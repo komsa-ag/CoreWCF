@@ -116,7 +116,7 @@ namespace CoreWCF.Security
 
         protected override SspiNegotiationTokenAuthenticatorState CreateSspiState(byte[] incomingBlob, string incomingValueTypeUri)
         {
-            ISspiNegotiation windowsNegotiation = new WindowsSspiNegotiation("Negotiate", GetNegotiateState());
+            ISspiNegotiation windowsNegotiation = new WindowsSspiNegotiation(GetNegotiateState());
             return new SspiNegotiationTokenAuthenticatorState(windowsNegotiation);
         }
 
@@ -156,7 +156,7 @@ namespace CoreWCF.Security
             }
             else
             {
-                token = new GenericSecurityToken(remoteIdentity.Name, SecurityUniqueId.Create().Value);
+                token = new GenericIdentitySecurityToken((GenericIdentity)remoteIdentity, SecurityUniqueId.Create().Value);
             }
             return authenticator.ValidateTokenAsync(token);
         }
