@@ -44,6 +44,8 @@ namespace CoreWCF.Dispatcher
                 if (messageFault != null)
                 {
                     rpc.FaultInfo.Fault = Message.CreateMessage(rpc.RequestVersion, messageFault, action);
+                    var s = rpc.FaultInfo.Fault.ToString();
+                    _ = s;
                 }
             }
         }
